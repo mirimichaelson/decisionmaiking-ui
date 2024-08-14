@@ -19,7 +19,7 @@ interface GalaxyParams {
   yOffset: number
 }
 
-function Galaxy() {
+function Galaxy({ testCount }: { testCount: number }) {
   const [galaxyParams] = useState<GalaxyParams>({
     count: 100000,
     size: 0.01,
@@ -52,14 +52,18 @@ function Galaxy() {
     gui.addColor(galaxyParams, 'insideColour').onFinishChange(generateGalaxy)
     gui.addColor(galaxyParams, 'outsideColour').onFinishChange(generateGalaxy)
 
-    gui.hide()
+    // TODO: Remove this test thing
+    // If testcount is even, hide the GUI
+    if (testCount % 2 === 0) {
+      gui.hide()
+    }
 
     generateGalaxy()
 
     return () => {
       gui.destroy()
     }
-  }, [galaxyParams])
+  }, [galaxyParams, testCount])
 
   const generateGalaxy = () => {
     const positions = new Float32Array(galaxyParams.count * 3)
@@ -120,7 +124,7 @@ function Galaxy() {
   )
 }
 
-export function ThreeCanvas() {
+export function ThreeCanvas({ testCount }: { testCount: number }) {
   const [size, setSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -141,9 +145,8 @@ export function ThreeCanvas() {
     <Canvas
       camera={{ position: [7, 3, 2], fov: 75, aspect: size.width / size.height, near: 0.1, far: 100 }}
       style={{ width: '100vw', height: '100vh', background: 'black' }}
-      // TODO: Remove white background on scroll
     >
-      <Galaxy />
+      <Galaxy testCount={testCount} />
     </Canvas>
   )
 }
